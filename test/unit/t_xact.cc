@@ -57,6 +57,27 @@ BOOST_AUTO_TEST_CASE(testDefaultConstruction)
   BOOST_CHECK(xact.journal == nullptr);
 }
 
+BOOST_AUTO_TEST_CASE(testItemIdentityComparison)
+{
+  xact_t original;
+  original.add_flags(ITEM_TEMP);
+  original._date = parse_date("2024/01/15");
+  original.payee = "Identity test";
+  xact_t copied(original);
+  item_t& item = original;
+  item_t& other = copied;
+
+  BOOST_CHECK(item == item);
+  BOOST_CHECK(!(item != item));
+  BOOST_CHECK(!(item == other));
+  BOOST_CHECK(!(other == item));
+  BOOST_CHECK(item != other);
+  BOOST_CHECK(other != item);
+  BOOST_CHECK(original == item);
+  BOOST_CHECK(!(original == copied));
+  BOOST_CHECK(original != copied);
+}
+
 BOOST_AUTO_TEST_CASE(testSetDateAndPayee)
 {
   // Setting date and payee on a transaction
