@@ -140,28 +140,28 @@ shared_ptr<Data> decrypted_stream_t::decrypt(shared_ptr<Data> enc_d) {
       throw runtime_error("Unable to create plain text buffer");
 
     auto res = ctx->decrypt(*enc_d.get(), *dec_d.get());
-    if (res.error())
-      throw_(runtime_error, _f("Decryption error: %1%: %2%") % res.error().source() %
+    if (res.error()) {
 #if GPGME_VERSION_NUMBER >= 0x011800
-                                res.error().asStdString()
+      throw_(runtime_error,
+             _f("Decryption error: %1%: %2%") % res.error().source() % res.error().asStdString());
 #else
-                                res.error().asString()
+      throw_(runtime_error,
+             _f("Decryption error: %1%: %2%") % res.error().source() % res.error().asString());
 #endif
-      );
+    }
   }
   return dec_d;
 }
 
 static inline void init_lib() {
   auto err = GpgME::initializeLibrary(0);
-  if (err.code() != GPG_ERR_NO_ERROR)
-    throw_(runtime_error, _f("%1%: %2%") % err.source() %
+  if (err.code() != GPG_ERR_NO_ERROR) {
 #if GPGME_VERSION_NUMBER >= 0x011800
-                              err.asStdString()
+    throw_(runtime_error, _f("%1%: %2%") % err.source() % err.asStdString());
 #else
-                              err.asString()
+    throw_(runtime_error, _f("%1%: %2%") % err.source() % err.asString());
 #endif
-    );
+  }
 }
 
 // TODO: Change return type to std::unique_ptr<std::istream> and update
