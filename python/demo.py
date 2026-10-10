@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
 from datetime import datetime
 
 # The following literate program will demonstrate, by example, how to use the
@@ -17,7 +16,6 @@ print("Welcome to the Ledger.Python demo!")
 def assertEqual(pat, candidate):
     if pat != candidate:
         raise Exception("FAILED: %s != %s" % (pat, candidate))
-        sys.exit(1)
 
 ###############################################################################
 #
