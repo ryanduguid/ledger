@@ -5,6 +5,7 @@
 #include <system.hh>
 
 #include "amount.h"
+#include "balance.h"
 #include "commodity.h"
 #include "annotate.h"
 #include "pool.h"
@@ -226,6 +227,111 @@ BOOST_AUTO_TEST_CASE(testCommodityComparison)
   BOOST_CHECK(x1.valid());
   BOOST_CHECK(x2.valid());
   BOOST_CHECK(x3.valid());
+}
+
+static void check_commodity_equality(const commodity_t& left, const commodity_t& right,
+                                     bool equal)
+{
+  BOOST_CHECK_EQUAL(left == right, equal);
+  BOOST_CHECK_EQUAL(right == left, equal);
+  BOOST_CHECK_EQUAL(left != right, !equal);
+  BOOST_CHECK_EQUAL(right != left, !equal);
+}
+
+BOOST_AUTO_TEST_CASE(testCommodityEqualityDispatch)
+{
+  amount_t base("1 EQUALITY");
+  amount_t other("1 DIFFERENT");
+  commodity_t& comm = base.commodity();
+  commodity_t* alias = comm.pool().alias("EQUALITY_ALIAS", comm);
+  BOOST_REQUIRE(alias);
+  BOOST_CHECK(alias == &comm);
+  check_commodity_equality(comm, *alias, true);
+  check_commodity_equality(comm, other.commodity(), false);
+}
+
+BOOST_AUTO_TEST_CASE(testAnnotatedCommodityEqualityDispatch)
+{
+  amount_t base("1 EQUALITY");
+  commodity_t& comm = base.commodity();
+  annotation_t details(amount_t("$50.00"), parse_date("2024/01/15"), string("lot1"),
+                       expr_t("amount"));
+  amount_t lot(base, details);
+  amount_t same(base, details);
+  check_commodity_equality(comm, lot.commodity(), false);
+  check_commodity_equality(lot.commodity(), same.commodity(), true);
+  BOOST_CHECK(lot == same);
+  BOOST_CHECK(!(base == lot));
+  BOOST_CHECK_EQUAL(lot.compare(same), 0);
+  BOOST_CHECK_THROW(base.compare(lot), amount_error);
+
+  const annotated_commodity_t& typed = as_annotated_commodity(lot.commodity());
+  const annotated_commodity_t& typed_same = as_annotated_commodity(same.commodity());
+  BOOST_CHECK(typed == typed_same);
+  BOOST_CHECK(!(typed == comm));
+  BOOST_CHECK(!(comm == typed));
+}
+
+BOOST_AUTO_TEST_CASE(testAnnotationEqualityFields)
+{
+  amount_t base("1 EQUALITY");
+  annotation_t details(amount_t("$50.00"), parse_date("2024/01/15"), string("lot1"),
+                       expr_t("amount"));
+  amount_t lot(base, details);
+  std::vector<annotation_t> differing;
+  annotation_t changed(details);
+  changed.price = amount_t("$60.00");
+  differing.push_back(changed);
+  changed = details;
+  changed.date = parse_date("2024/02/15");
+  differing.push_back(changed);
+  changed = details;
+  changed.tag = string("lot2");
+  differing.push_back(changed);
+  changed = details;
+  changed.value_expr = expr_t("total");
+  differing.push_back(changed);
+  changed = details;
+  changed.add_flags(ANNOTATION_PRICE_FIXATED);
+  differing.push_back(changed);
+
+  for (const annotation_t& different : differing) {
+    amount_t variant(base, different);
+    check_commodity_equality(lot.commodity(), variant.commodity(), false);
+    BOOST_CHECK(!(lot == variant));
+    BOOST_CHECK_THROW(lot.compare(variant), amount_error);
+  }
+
+  changed = details;
+  changed.value_expr = expr_t("amount");
+  changed.add_flags(ANNOTATION_DATE_CALCULATED);
+  amount_t semantic_equal(base, changed);
+  check_commodity_equality(lot.commodity(), semantic_equal.commodity(), true);
+}
+
+BOOST_AUTO_TEST_CASE(testCommodityEqualityBalanceGroups)
+{
+  amount_t base("1 EQUALITY");
+  commodity_t& comm = base.commodity();
+  commodity_t* alias = comm.pool().alias("EQUALITY_ALIAS", comm);
+  BOOST_REQUIRE(alias);
+  annotation_t details(amount_t("$50.00"), parse_date("2024/01/15"), string("lot1"),
+                       expr_t("amount"));
+  amount_t lot(base, details);
+  amount_t same(base, details);
+  annotation_t changed(details);
+  changed.price = amount_t("$60.00");
+  amount_t different_lot(base, changed);
+  amount_t alias_amount("1 EQUALITY_ALIAS");
+  balance_t balance(lot);
+  balance += same;
+  balance += different_lot;
+  balance += base;
+  balance += alias_amount;
+  BOOST_CHECK_EQUAL(balance.commodity_count(), 3);
+  BOOST_CHECK(balance.amounts.at(&lot.commodity()) == lot * 2L);
+  BOOST_CHECK(balance.amounts.at(&different_lot.commodity()) == different_lot);
+  BOOST_CHECK(balance.amounts.at(&comm) == base * 2L);
 }
 
 BOOST_AUTO_TEST_CASE(testCommodityPrint)

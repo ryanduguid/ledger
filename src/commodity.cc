@@ -144,7 +144,7 @@ std::optional<price_point_t> commodity_t::find_price_from_expr(expr_t& expr,
   if (result.is_balance()) {
     const commodity_t* target = commodity;
     if (!target && pool().default_commodity)
-      target = &*pool().default_commodity;
+      target = pool().default_commodity;
     if (target) {
       if (auto repriced = result.as_balance().value(moment, target))
         result = *repriced;
@@ -177,7 +177,7 @@ std::optional<price_point_t> commodity_t::find_price(const commodity_t* commodit
   if (commodity)
     target = commodity;
   else if (pool().default_commodity)
-    target = &*pool().default_commodity;
+    target = pool().default_commodity;
 
   if (target && this == target)
     return std::nullopt;
