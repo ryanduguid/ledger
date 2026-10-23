@@ -1,8 +1,8 @@
-[![Join the chat at https://gitter.im/use-package/Lobby](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fbadges.gitter.im%2Fuse-package%2FLobby.svg&query=normalize-space%28%28%2F%2F%2A%5Blocal-name%28%29%3D%27text%27%5D%29%5Blast%28%29%5D%29&label=chat&style=flat&labelColor=000000&color=66023C)](https://gitter.im/use-package/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![Build Status main](https://img.shields.io/github/actions/workflow/status/ledger/ledger/cmake.yml?label=CMake&style=flat&labelColor=000000)
-[![Status](https://img.shields.io/badge/status-active-brightgreen.svg?style=flat&labelColor=000000)](https://github.com/ledger/ledger/pulse/monthly)
-[![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat&labelColor=000000&color=66023C)](https://opensource.org/licenses/BSD-3-Clause)
-[![GitHub release](https://img.shields.io/github/release/ledger/ledger.svg?style=flat&labelColor=000000&color=66023C)](https://github.com/ledger/ledger/releases)
+<div align="center">
+
+[![Join the chat at https://gitter.im/use-package/Lobby](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fbadges.gitter.im%2Fuse-package%2FLobby.svg&query=normalize-space%28%28%2F%2F%2A%5Blocal-name%28%29%3D%27text%27%5D%29%5Blast%28%29%5D%29&label=chat&style=flat&labelColor=000000&color=66023C)](https://gitter.im/use-package/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) ![Build Status main](https://img.shields.io/github/actions/workflow/status/ledger/ledger/cmake.yml?label=CMake&style=flat&labelColor=000000) [![Status](https://img.shields.io/badge/status-active-brightgreen.svg?style=flat&labelColor=000000)](https://github.com/ledger/ledger/pulse/monthly) [![License](https://img.shields.io/badge/license-BSD-blue.svg?style=flat&labelColor=000000&color=66023C)](https://opensource.org/licenses/BSD-3-Clause) [![GitHub release](https://img.shields.io/github/release/ledger/ledger.svg?style=flat&labelColor=000000&color=66023C)](https://github.com/ledger/ledger/releases)
+
+</div>
 
 # Ledger: Command-Line Accounting
 
